@@ -28,6 +28,9 @@ Auditability: All sensitive actions must be logged with immutable audit records.
 
 
 
+
+
+
 ### High-level milestone list (final)
 
 M0 — Repo Prep & Developer Environment
@@ -53,22 +56,32 @@ M9 — Creative & Research Assistant + Production Hardening
 
 Note: M1 scaffolding has been implemented in this project as safe, in-memory components. The checkmark above indicates M1 scaffold completion; remaining M1 deliverables (persistent DB & full LLM integration) are tracked in M3 and M2 respectively.
 
+
+
+
+
+
+
+
+
+
+
 ### Milestones (detailed)
 
 
-### M0 — Repo Prep & Developer Environment
+# M0 — Repo Prep & Developer Environment
 
 ## Goal: Prepare a reproducible developer environment so different sessions/people can work in parallel.
 
-Deliverables
+Deliverables:
 
-Monorepo skeleton (packages/), docker-compose dev stack, devcontainer, CI skeleton.
+- Monorepo skeleton (packages/), docker-compose dev stack, devcontainer, CI skeleton.
 
-Linting, pre-commit hooks, README/ARCHITECTURE.
+- Linting, pre-commit hooks, README/ARCHITECTURE.
 
-Minimal “example run” instructions.
+- Minimal “example run” instructions.
 
-Files to add/update
+### Files to add/update:-
 
 /README.md
 /ARCHITECTURE.md
@@ -80,49 +93,56 @@ Files to add/update
 /packages/ui/package.json
 
 
-Tech choices
+### Tech choices
 
-Python FastAPI for Agent Core (interop-friendly).
+- Python FastAPI for Agent Core (interop-friendly).
 
-Node/React (Vite or Next) for UI.
+- Node/React (Vite or Next) for UI.
 
-Postgres (production), SQLite allowed for dev.
+- Postgres (production), SQLite allowed for dev.
 
-Redis for queues.
+- Redis for queues.
 
-Persona constraints
+### Persona constraints
 
-Only add infra needed for local dev. No cloud deployment code yet.
+- Only add infra needed for local dev. No cloud deployment code yet.
 
-Each infra item is a separate commit.
+- Each infra item is a separate commit.
 
-Acceptance
+### Acceptance
 
-docker-compose up brings dev services up (API returns {"msg":"ok"}).
+- docker-compose up brings dev services up (API returns {"msg":"ok"}).
 
-CI runs linter & unit tests (empty test suite at first).
+- CI runs linter & unit tests (empty test suite at first).
 
-M1 — Agent Core & Planner (Minimal Autonomous Loop) — IMPLEMENT FIRST
 
-Goal: Minimal working agent: accept a goal, produce a plan (stub/LLM), execute safe tools, log results (initially in-memory).
+
+
+
+
+
+
+# M1 — Agent Core & Planner (Minimal Autonomous Loop) — IMPLEMENT FIRST
+
+## Goal: Minimal working agent: accept a goal, produce a plan (stub/LLM), execute safe tools, log results (initially in-memory).
 
 Why it’s first: This is the agent’s “brain.” Everything else plugs into it.
 
-Deliverables
+### Deliverables
 
-FastAPI service: /v1/agent/plan, /v1/agent/execute, /v1/agent/status.
+- FastAPI service: /v1/agent/plan, /v1/agent/execute, /v1/agent/status.
 
-Planner stub (safe hardcoded behaviors at first; optionally an adapter to AnythingLLM).
+- Planner stub (safe hardcoded behaviors at first; optionally an adapter to AnythingLLM).
 
-Executor that runs only echo and http_request tools.
+- Executor that runs only echo and http_request tools.
 
-Tool Base interface.
+- Tool Base interface.
 
-In-memory task & log store (persistence deferred until M3).
+- In-memory task & log store (persistence deferred until M3).
 
-Unit tests and curl examples.
+- Unit tests and curl examples.
 
-Files (scaffold)
+### Files (scaffold)
 
 /packages/api/app/main.py
 /packages/api/app/routes/agent.py
@@ -136,7 +156,7 @@ Files (scaffold)
 /tests/test_agent.py
 
 
-Key models / schemas (Pydantic)
+### Key models / schemas (Pydantic)
 
 PlanRequest(goal: str, context: dict)
 PlanStep(id: str, action: str, input: dict, requires_approval: bool=False)
@@ -144,13 +164,13 @@ PlanResponse(task_id: UUID, steps: List[PlanStep])
 ExecutionResult(step_id: str, status: str, output: dict)
 
 
-Planner
+### Planner
 
 M1: safe stub with a predictable mapping (e.g. if "fetch" in goal -> http_request).
 
 Also include an LLM adapter skeleton (llm_adapter.py) so LLM can be enabled later.
 
-Executor
+### Executor
 
 Validate step against Tool manifest (exists + input schema).
 
@@ -158,11 +178,11 @@ No arbitrary shell exec. No filesystem access.
 
 Return structured outputs: {status, output, metadata}.
 
-Logging
+### Logging
 
 In-memory tasks and task_logs dicts, with functions get_task, save_task, append_log.
 
-Acceptance
+### Acceptance
 
 POST /v1/agent/plan -> returns JSON steps for simple goals.
 
@@ -170,27 +190,37 @@ POST /v1/agent/execute -> runs steps and returns results.
 
 pytest unit tests for planner mapping and executor tool responses.
 
-Persona enforcement
+### Persona enforcement
 
 Tools = echo, http_request only. Any addition requires explicit approval.
 
 Planner uses stub by default; enable LLM only after safety checks (M2).
 
-Commit plan (one commit per unit)
+### Commit plan (one commit per unit)
 
-chore(m1): add pydantic models and tests
+- chore(m1): add pydantic models and tests
 
-feat(m1): add echo tool
+- feat(m1): add echo tool
 
-feat(m1): add http_request tool
+- feat(m1): add http_request tool
 
-feat(m1): implement planner stub
+- feat(m1): implement planner stub
 
-feat(m1): implement executor
+- feat(m1): implement executor
 
-feat(m1): add agent routes + main entrypoint
+- feat(m1): add agent routes + main entrypoint
 
-test(m1): add unit tests + run steps in README
+- test(m1): add unit tests + run steps in README
+
+
+
+
+
+
+
+
+
+
 
 M2 — Tool Registry, Manifests & Sandboxed Runners
 
