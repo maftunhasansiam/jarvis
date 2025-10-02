@@ -222,7 +222,7 @@ Planner uses stub by default; enable LLM only after safety checks (M2).
 
 
 
-M2 — Tool Registry, Manifests & Sandboxed Runners
+# M2 — Tool Registry, Manifests & Sandboxed Runners
 
 Goal: Make tools pluggable, discoverable, validated, permissioned, and sandboxed.
 
